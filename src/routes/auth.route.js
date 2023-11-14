@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { AUTH_ROUTES } from "./urlConfig.js";
+import AuthController from "../controllers/auth.controller.js";
+
 const router = Router();
 
 /**
@@ -15,19 +17,9 @@ const router = Router();
  */
 
 // sign-in
-router.post(AUTH_ROUTES.LOGIN, (req, res) => {
-  res.status(200).json({
-    msg: "user logged in successfuly",
-    success: true,
-  });
-});
+router.post(AUTH_ROUTES.LOGIN, AuthController.LOGIN);
 
 // sign-up
-router.post(AUTH_ROUTES.REGISTER, (req, res) => {
-  res.status(200).json({
-    msg: "user reistered successfuly",
-    success: true,
-  });
-});
+router.post(AUTH_ROUTES.REGISTER, AuthController.REGISTER);
 
 export { router as AuthRouter };

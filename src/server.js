@@ -3,14 +3,14 @@ import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
-const { urlencoded, json } = bodyParser;
 
 import { connectDB } from "./modules/mongoose.config.js";
 import { startServer } from "./startServer.js";
-import { AppRoutes } from "./routes/appRoutes.js";
 
-// Routes
+import { AppRoutes } from "./routes/appRoutes.js";
 import { NotFoundRoute } from "./routes/noFoundRoute.js";
+
+const { urlencoded, json } = bodyParser;
 
 // env config
 dotenv.config();

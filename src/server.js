@@ -6,9 +6,7 @@ import morgan from "morgan";
 
 import { connectDB } from "./modules/mongoose.config.js";
 import { startServer } from "./startServer.js";
-
-import { AppRoutes } from "./routes/appRoutes.js";
-import { NotFoundRoute } from "./routes/noFoundRoute.js";
+import { routes } from "./routes/routes.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -21,10 +19,10 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-app.use(AppRoutes);
+// Serve static files in the 'uploads' folder
+app.use("/uploads", express.static("uploads"));
 
-// no match route
-app.use(NotFoundRoute);
+app.use(routes);
 
 startServer(app);
 connectDB();

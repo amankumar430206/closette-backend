@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 
-export const connectDB = async () => {
-  try {
-    mongoose.connect(process.env.DATABASE_LOCAL, {
+export const connectDB = () => {
+  mongoose
+    .connect(process.env.DATABASE_LOCAL, {
       autoIndex: true,
+    })
+    .then((connection) => {
+      console.log("Connected to Database");
+    })
+    .catch((err) => {
+      console.error("Failed to connect to Database..", err.code);
     });
-    console.log("Connected to Database");
-  } catch (err) {
-    console.error("Failed to connect to Database!", err);
-  }
 };

@@ -1,46 +1,24 @@
 import { Users } from "../models/Users.js";
+import { Auth } from "../models/Auth.js";
+import { loginValidation } from "../models/validations/auth.validation.js";
+import { triggerEmail } from "../services/sendEmail.js";
+import OtpGenerator from "otp-generator";
 
 export default {
   // sign-in
-  LOGIN: async (req, res, next) => {
+  login: async (req, res, next) => {
     try {
-      const { username, password } = req.body;
-      let user = await Users.findOne({ username });
+      const { email, password } = req.body;
 
-      if (!user) {
-        return res.status(401).json({
-          msg: "Invalid Credentials",
+      const { error } = loginValidation.validate(req.body);
+      if (error)
+        return res.status(400).json({
+          msg: error.details[0].message,
           success: false,
         });
-      }
 
-      const passwordMatched =
-        password === user.password || (await user.verifyPassword(password));
-
-      if (!passwordMatched)
-        return res.status(401).json({
-          success: false,
-          msg: "Invalid Password.. Please try Again",
-        });
-
-      // generating a token
-      const token = user.generateToken();
-
-      res.status(200).json({
-        success: true,
-        msg: "token generated successfully",
-        token,
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  // sign-up
-  REGISTER: async (req, res, next) => {
-    try {
-      const { username, password } = req.body;
-      let user = await Users.findOne({ username });
+      // find user with email
+      let user = await Users.findOne({ email });
 
       if (!user) {
         return res.status(401).json({
@@ -72,60 +50,62 @@ export default {
   },
 
   // send one time password, for OTP verificatino page
-  SEND_OTP: async (req, res, next) => {
+  sendOTP: async (req, res, next) => {
     try {
-      const { username, password } = req.body;
-      let user = await Users.findOne({ username });
+      // validate email
+      const generatedOTP = OtpGenerator.generate(4, {
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false,
+        digits: true,
+      });
 
-      if (!user) {
-        return res.status(401).json({
-          msg: "Invalid Credentials",
-          success: false,
-        });
-      }
+      const emailSent = await triggerEmail({
+        to: "aman.vishwakarma.dev@gmail.com",
+        OTP: generatedOTP,
+      });
 
-      const passwordMatched =
-        password === user.password || (await user.verifyPassword(password));
-
-      if (!passwordMatched)
-        return res.status(401).json({
-          success: false,
-          msg: "Invalid Password.. Please try Again",
-        });
-
-      // generating a token
-      const token = user.generateToken();
+      // set OTP for the user
+      let updated = await Users.updateOne(
+        {
+          email: req.body.email,
+        },
+        { otp: generatedOTP }, // generate a new OTP everytime
+        { upsert: true }
+      );
 
       res.status(200).json({
         success: true,
-        msg: "token generated successfully",
-        token,
+        msg: "OTP sent successfully, check your email",
+        updated,
       });
     } catch (err) {
       next(err);
     }
   },
 
-  // sign-up
-  REGISTER: async (req, res, next) => {
+  // OTP verfication
+  verifyOTP: async (req, res, next) => {
     try {
-      const { username, password } = req.body;
-      let user = await Users.findOne({ username });
+      const { OTP } = req.body;
 
-      if (!user) {
-        return res.status(401).json({
-          msg: "Invalid Credentials",
+      if (!OTP)
+        return res.status(400).json({
+          msg: "bad request",
           success: false,
         });
-      }
 
-      const passwordMatched =
-        password === user.password || (await user.verifyPassword(password));
+      let user = await Users.findOne({ email: req.body.email });
 
-      if (!passwordMatched)
-        return res.status(401).json({
-          success: false,
-          msg: "Invalid Password.. Please try Again",
+      const verified = user.verifyOTP(OTP);
+
+      console.log(user);
+
+      if (!verified)
+        res.status(400).json({
+          success: true,
+          msg: "invalid OTP",
+          verified,
         });
 
       // generating a token
@@ -133,7 +113,7 @@ export default {
 
       res.status(200).json({
         success: true,
-        msg: "token generated successfully",
+        msg: "OTP verified successfully",
         token,
       });
     } catch (err) {

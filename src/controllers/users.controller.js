@@ -1,5 +1,5 @@
 import { Users } from "../models/Users.js";
-
+import { userDetailsValidation } from "../models/validations/user.validation.js";
 export default {
   // get users list
   USERS: async (req, res, next) => {
@@ -39,32 +39,81 @@ export default {
   // update user details
   UPDATE_USER: async (req, res, next) => {
     try {
-      const { username, password } = req.body;
-      let user = await Users.findOne({ username });
+      let user = await Users.findOne({ _id: req.decoded._id });
 
       if (!user) {
-        return res.status(401).json({
-          msg: "Invalid Credentials",
+        return res.status(400).json({
+          msg: "User Not Found",
           success: false,
         });
       }
 
-      const passwordMatched =
-        password === user.password || (await user.verifyPassword(password));
-
-      if (!passwordMatched)
-        return res.status(401).json({
+      // validate user data
+      const { error } = userDetailsValidation.validate(req.body);
+      if (error)
+        return res.status(400).json({
+          msg: error.details[0].message,
           success: false,
-          msg: "Invalid Password.. Please try Again",
         });
 
-      // generating a token
-      const token = user.generateToken();
+      const userDetails = {
+        username: req.body.username,
+        name: req.body.name,
+        dob: req.body.dob,
+        gender: req.body.gender,
+        contact: req.body.contact?.trim(),
+      };
+
+      // update found user with req.body or payload
+      const result = await Users.findOneAndUpdate(
+        {
+          _id: user._id,
+        },
+
+        // payload to update
+        {
+          ...userDetails,
+        }
+      );
 
       res.status(200).json({
         success: true,
-        msg: "token generated successfully",
-        token,
+        msg: "user updated successfully",
+        result,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // update user photo
+  UPDATE_PHOTO: async (req, res, next) => {
+    try {
+      let user = await Users.findOne({ _id: req.decoded._id });
+
+      if (!user) {
+        return res.status(400).json({
+          msg: "User Not Found",
+          success: false,
+        });
+      }
+
+      // update found user with req.body or payload
+      const result = await Users.findOneAndUpdate(
+        {
+          _id: user._id,
+        },
+
+        // payload to update
+        {
+          photo: `${user.name}'s photo url get from s3 bucket`,
+        }
+      );
+
+      res.status(200).json({
+        success: true,
+        msg: "user updated successfully",
+        result,
       });
     } catch (err) {
       next(err);

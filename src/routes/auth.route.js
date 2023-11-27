@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AUTH_ROUTES } from "./urlConfig.js";
 import AuthController from "../controllers/auth.controller.js";
+import { VerifyToken } from "../middlewares/verifyToken.js";
 
 const router = Router();
 
@@ -16,10 +17,8 @@ const router = Router();
  * send user details
  */
 
-// sign-in
-router.post(AUTH_ROUTES.LOGIN, AuthController.LOGIN);
-
-// sign-up
-router.post(AUTH_ROUTES.REGISTER, AuthController.REGISTER);
+router.post(AUTH_ROUTES.LOGIN, AuthController.login);
+router.post(AUTH_ROUTES.OTP_SEND, AuthController.sendOTP);
+router.post(AUTH_ROUTES.OTP_VERIFY, AuthController.verifyOTP);
 
 export { router as AuthRouter };

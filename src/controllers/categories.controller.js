@@ -15,13 +15,22 @@ export default {
     }
   },
 
+  getSubCategoryByParent: async (req, res, next) => {
+    try {
+      let data = await Category.find({ parentCategory: req.body.categoryId });
+
+      res.status(200).json({
+        success: true,
+        content: data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   addCategories: async (req, res, next) => {
     try {
-      const data = await Category.insertMany([
-        {
-          name: "",
-        },
-      ]);
+      const data = await Category.insertMany(req.body.categories);
       res.status(200).json({
         success: true,
         content: data,

@@ -51,6 +51,17 @@ export default {
           success: false,
         });
 
+      const duplicateFound = await Closette.findOne({
+        owner: req.decoded._id,
+        name: req.body.name.trim(),
+      });
+
+      if (duplicateFound)
+        return res.status(400).json({
+          success: false,
+          msg: "closette with same name already exists",
+        });
+
       let newClosette = new Closette({
         owner: req.decoded._id,
         name: req.body.name,

@@ -99,8 +99,6 @@ export default {
 
       const verified = user.verifyOTP(OTP);
 
-      console.log(user);
-
       if (!verified)
         res.status(400).json({
           success: true,

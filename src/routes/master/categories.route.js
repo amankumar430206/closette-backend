@@ -6,6 +6,11 @@ const router = Router();
 
 // get all closettes
 router.get("/category", VerifyToken, CategoryController.getAll);
+router.get(
+  "/category/sub",
+  VerifyToken,
+  CategoryController.getSubCategoryByParent
+);
 router.post("/category/add", VerifyToken, CategoryController.addCategories);
 router.post(
   "/category/remove/:id",

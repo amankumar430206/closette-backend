@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export const connectDB = () => {
   mongoose
-    .connect(process.env.DATABASE_LOCAL, {
+    .connect(process.env.DATABASE, {
       autoIndex: true,
     })
     .then((connection) => {

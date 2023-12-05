@@ -23,7 +23,7 @@ export const startServer = async (server) => {
   else {
     const port = process.env.PORT;
     const IP = process.env.IP;
-    server.listen(port, IP, () => {
+    server.listen(port, () => {
       console.log(`worker started ${process.pid} :: ${port} `);
     });
   }

@@ -5,7 +5,7 @@ const numCPUs = os.cpus().length;
 
 export const startServer = async (server) => {
   // config cluster for parallel processing
-  if (false) {
+  if (cluster.isPrimary) {
     console.log(`Master ${process.pid} is running`);
 
     // forking available workers..

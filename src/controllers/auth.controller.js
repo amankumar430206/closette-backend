@@ -70,7 +70,7 @@ export default {
 
       res.status(200).json({
         success: true,
-        msg: "OTP sent successfully, check your email",
+        msg: "OTP sent successfully, please check your email",
         updated,
       });
     } catch (err) {

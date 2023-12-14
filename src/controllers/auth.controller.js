@@ -53,24 +53,18 @@ export default {
   sendOTP: async (req, res, next) => {
     try {
       // validate email
-      const generatedOTP = OtpGenerator.generate(4, {
-        lowerCaseAlphabets: false,
-        upperCaseAlphabets: false,
-        specialChars: false,
-        digits: true,
-      });
 
-      const emailSent = await triggerEmail({
-        to: "aman.vishwakarma.dev@gmail.com",
-        OTP: generatedOTP,
-      });
+      // const emailSent = await triggerEmail({
+      //   to: req.body.email, // change to req body {email}
+      //   OTP: 1234,
+      // });
 
       // set OTP for the user
       let updated = await Users.updateOne(
         {
           email: req.body.email,
         },
-        { otp: generatedOTP }, // generate a new OTP everytime
+        { otp: 1234 }, // generate a new OTP everytime
         { upsert: true }
       );
 
@@ -119,3 +113,10 @@ export default {
     }
   },
 };
+
+export const generatedOTP = OtpGenerator.generate(4, {
+  lowerCaseAlphabets: false,
+  upperCaseAlphabets: false,
+  specialChars: false,
+  digits: true,
+});

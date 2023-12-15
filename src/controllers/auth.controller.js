@@ -1,6 +1,10 @@
 import { Users } from "../models/Users.js";
 import { Auth } from "../models/Auth.js";
-import { loginValidation } from "../models/validations/auth.validation.js";
+import {
+  EmailValidation,
+  loginValidation,
+  VerifyOTPValidation,
+} from "../models/validations/auth.validation.js";
 import { triggerEmail } from "../services/sendEmail.js";
 import OtpGenerator from "otp-generator";
 
@@ -11,6 +15,7 @@ export default {
       const { email, password } = req.body;
 
       const { error } = loginValidation.validate(req.body);
+
       if (error)
         return res.status(400).json({
           msg: error.details[0].message,
@@ -52,19 +57,34 @@ export default {
   // send one time password, for OTP verificatino page
   sendOTP: async (req, res, next) => {
     try {
-      // validate email
+      // validate request body
 
-      // const emailSent = await triggerEmail({
-      //   to: req.body.email, // change to req body {email}
-      //   OTP: 1234,
-      // });
+      const { error } = EmailValidation.validate(req.body);
+      if (error)
+        return res.status(400).json({
+          msg: error.details[0].message,
+          success: false,
+        });
+
+      const { email } = req.body;
+
+      // generate OTP
+      const OTP = generatedOTP;
+
+      // send email
+      const emailSent = await triggerEmail({
+        to: email,
+        OTP,
+      });
+
+      console.log("sending email...", emailSent);
 
       // set OTP for the user
       let updated = await Users.updateOne(
         {
-          email: req.body.email,
+          email: email,
         },
-        { otp: 1234 }, // generate a new OTP everytime
+        { otp: OTP }, // generate a new OTP everytime
         { upsert: true }
       );
 
@@ -83,9 +103,11 @@ export default {
     try {
       const { OTP } = req.body;
 
-      if (!OTP)
+      const { error } = VerifyOTPValidation.validate(req.body);
+
+      if (error)
         return res.status(400).json({
-          msg: "bad request",
+          msg: error.details[0].message,
           success: false,
         });
 

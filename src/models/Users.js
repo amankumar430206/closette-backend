@@ -13,7 +13,7 @@ const UserSchema = new Schema(
   {
     email: { type: String, trim: true, unique: true },
     username: { type: String, trim: true, required: true },
-    otp: { type: Number },
+    otp: { type: String },
     role: {
       type: String,
       enum: ["ADMIN", "CLIENT"],
@@ -58,8 +58,8 @@ UserSchema.methods.verifyPassword = function (password) {
   return compareSync(password, user.password);
 };
 
-UserSchema.methods.verifyOTP = function (payload) {
-  return this.otp === payload;
+UserSchema.methods.verifyOTP = function (OTP) {
+  return this.otp === OTP;
 };
 
 UserSchema.methods.generateToken = function () {

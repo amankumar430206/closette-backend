@@ -3,7 +3,7 @@ import Joi from "joi";
 function validateClosette(payload) {
   const schema = Joi.object({
     name: Joi.string().required(),
-    owner: Joi.required(),
+    user: Joi.required(),
   });
   return schema.validate(payload);
 }

@@ -31,7 +31,7 @@ export default {
 
   getByUserId: async (req, res, next) => {
     try {
-      let data = await Products.find({ owner: req.params.id });
+      let data = await Products.find({ user: req.params.id });
 
       res.status(200).json({
         success: true,
@@ -44,7 +44,7 @@ export default {
 
   createProduct: async (req, res, next) => {
     try {
-      let user = await Users.findOne({ _id: req.body.owner });
+      let user = await Users.findOne({ _id: req.body.user });
       if (!user)
         res.status(400).json({
           success: true,

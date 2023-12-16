@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const productValidationSchema = Joi.object({
   title: Joi.string().required(),
-  owner: Joi.string().hex().required(), // Assuming the category is identified by its name
+  user: Joi.string().hex().required(), // Assuming the category is identified by its name
   category: Joi.string().hex().required(), // Assuming the category is identified by its name
   image: Joi.string().required(),
   brand: Joi.string().required(),

@@ -1,4 +1,4 @@
-import { Closette } from "../models/Closette.js";
+import { Closette, defaultSections } from "../models/Closette.js";
 import { closetteValidatiion } from "../models/validations/closette.validation.js";
 
 export default {
@@ -30,7 +30,7 @@ export default {
 
   getByUserId: async (req, res, next) => {
     try {
-      let data = await Closette.find({ owner: req.params.id });
+      let data = await Closette.find({ user: req.params.id });
 
       res.status(200).json({
         success: true,
@@ -45,30 +45,61 @@ export default {
     try {
       // validating the closette payload
       const { error } = closetteValidatiion.validate(req.body);
+
       if (error)
         return res.status(400).json({
           msg: error.details[0].message,
           success: false,
         });
 
+      const user = req.body.user || req.decoded._id;
+
       const duplicateFound = await Closette.findOne({
-        owner: req.decoded._id,
+        user: user,
         name: req.body.name.trim(),
       });
 
       if (duplicateFound)
         return res.status(400).json({
           success: false,
-          msg: "closette with same name already exists",
+          msg: "you have already created closette with the same name",
         });
 
-      let newClosette = new Closette({
-        owner: req.decoded._id,
-        name: req.body.name,
-        location: req.body.location,
+      const { name, location, description, sections } = req.body;
+
+      // genetate sections for the closette
+      const Sections = sections.length ? sections : defaultSections;
+
+      let closette = new Closette({
+        user: user,
+        name: name,
+        location: location,
+        description: description,
+        sections: generateSections(Sections),
       });
 
-      const data = await newClosette.save();
+      // save the closette for the user
+      const data = await closette.save();
+
+      res.status(200).json({
+        success: true,
+        msg: "closette has been created successfully!",
+        content: data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  assign: async (req, res, next) => {
+    try {
+      // validating the closette payload
+      const { error } = closetteValidatiion.validate(req.body);
+      if (error)
+        return res.status(400).json({
+          msg: error.details[0].message,
+          success: false,
+        });
 
       res.status(200).json({
         success: true,
@@ -78,4 +109,13 @@ export default {
       next(err);
     }
   },
+};
+
+const generateSections = (sections = []) => {
+  return sections.map((name) => {
+    return {
+      name: name?.toLowerCase(),
+      items: [],
+    };
+  });
 };

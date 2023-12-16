@@ -15,7 +15,7 @@ const ProductSchema = new mongoose.Schema({
     ref: MODELS.CATEGORY, // Reference to the Categories model
     required: true,
   },
-  owner: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: MODELS.USERS, // Reference to the Users model
     required: true,

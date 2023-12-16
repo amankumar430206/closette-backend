@@ -69,7 +69,7 @@ export default {
       const { email } = req.body;
 
       // generate OTP
-      const OTP = generatedOTP;
+      const OTP = generateOTP();
 
       // send email
       const emailSent = await triggerEmail({
@@ -136,9 +136,11 @@ export default {
   },
 };
 
-export const generatedOTP = OtpGenerator.generate(4, {
-  lowerCaseAlphabets: false,
-  upperCaseAlphabets: false,
-  specialChars: false,
-  digits: true,
-});
+export const generateOTP = () => {
+  return OtpGenerator.generate(4, {
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+    digits: true,
+  });
+};

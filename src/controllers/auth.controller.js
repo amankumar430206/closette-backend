@@ -129,6 +129,7 @@ export default {
         success: true,
         msg: "OTP verified successfully",
         token,
+        user: user._id,
       });
     } catch (err) {
       next(err);

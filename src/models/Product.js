@@ -10,9 +10,14 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  category: {
+  section: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: MODELS.CATEGORY, // Reference to the Categories model
+    ref: MODELS.CLOSETTE_SECTION, // Reference to the section model
+    required: true,
+  },
+  closette: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: MODELS.CLOSETTE, // Reference to the closette model
     required: true,
   },
   user: {
@@ -34,19 +39,8 @@ const ProductSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-
   color: {
     type: String,
-  },
-  size: {
-    type: String,
-  },
-  ratings: {
-    type: Number,
-    default: 0,
-  },
-  features: {
-    type: [String], // Array of product features
   },
 });
 

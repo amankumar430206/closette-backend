@@ -5,20 +5,28 @@ import { upload } from "../middlewares/fileUpload.js";
 
 const router = Router();
 
-// get all products
+// get all products [admin]
 router.get("/products", VerifyToken, Controller.getAll);
 
-// get product by id
+// get product by product id
 router.get("/products/:id", VerifyToken, Controller.getById);
 
-// get all products of user
+// get products of the user
 router.get("/products/user", VerifyToken, Controller.getByUserId);
 
 // add product
-router.post("/products/add", VerifyToken, Controller.createProduct);
+router.post(
+  "/products/add",
+  VerifyToken,
+  upload.single("image"),
+  Controller.addProduct
+);
+
+// assign closette to product
+router.put("/products/assign/closette", VerifyToken, Controller.assignClosette);
 
 // update product
-router.put("/products/:id/update", VerifyToken, Controller.getByUserId);
+router.put("/products/:id", VerifyToken, Controller.getByUserId);
 
 // update product image
 router.patch(

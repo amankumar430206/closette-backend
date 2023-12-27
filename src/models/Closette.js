@@ -21,16 +21,24 @@ export const defaultSections = [
 
 // Define a schema for a wardrobe section
 const SectionSchema = new Schema({
+  closette: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: MODELS.CLOSETTE,
+    required: "please assign closette to the section",
+  },
   name: {
     type: String,
     required: "pleae assign name to section",
   },
-  items: {
-    type: Array,
-  }, // An array of items in this section
+  items: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: MODELS.PRODUCT,
+    },
+  ],
 });
 
-const WardrobeSchema = new Schema(
+const ClosetteSchema = new Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -45,13 +53,18 @@ const WardrobeSchema = new Schema(
     },
     location: { type: String, trim: true },
     description: { type: String, trim: true, maxLength: 255 },
-    sections: [SectionSchema],
+    sections: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: MODELS.CLOSETTE_SECTION,
+      },
+    ],
   },
   { timestamps: true }
 );
 
 // closette pre-save middleware
-WardrobeSchema.pre("save", function (next) {
+ClosetteSchema.pre("save", function (next) {
   // Ensure that the values is in lowercase before saving
   if (this.isModified("name")) {
     this.name = this.name.toLowerCase();
@@ -59,9 +72,9 @@ WardrobeSchema.pre("save", function (next) {
   next();
 });
 
-WardrobeSchema.plugin(deepPopulate);
+ClosetteSchema.plugin(deepPopulate);
 
-export const Closette = new mongoose.model(MODELS.CLOSETTE, WardrobeSchema);
+export const Closette = new mongoose.model(MODELS.CLOSETTE, ClosetteSchema);
 
 export const ClosetteSection = new mongoose.model(
   MODELS.CLOSETTE_SECTION,

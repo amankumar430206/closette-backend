@@ -42,31 +42,81 @@ export default {
     }
   },
 
-  createProduct: async (req, res, next) => {
+  addProduct: async (req, res, next) => {
     try {
-      let user = await Users.findOne({ _id: req.body.user });
-      if (!user)
-        res.status(400).json({
-          success: true,
-          msg: "bad request",
-        });
+      // can be retrieved from, token or body
+      const userId = req.body.user || req.decoded._id;
 
-      const { error } = productValidationSchema.validate(req.body);
+      console.log(req.file);
+
+      const { error } = productValidationSchema.validate({
+        ...req.body,
+        image: req.file,
+      });
       if (error)
         return res.status(400).json({
           msg: error.details[0].message,
           success: false,
         });
 
-      const newProduct = new Products({
-        ...req.body,
+      let user = await Users.findOne({ _id: userId });
+      if (!user)
+        res.status(400).json({
+          success: true,
+          msg: "bad request",
+        });
+
+      // save image to s3
+
+      // assign product with the user
+      const saved = new Products({
+        closette: req.body.closette,
+        category: req.body.category,
+        title: req.body.title,
+        description: req.body.description,
+        color: req.body.color,
+        user: user._id,
+        // image is left to process
+        image: req.file.filename,
       });
 
-      const saved = await newProduct.save();
+      const result = await saved.save();
 
       res.status(200).json({
         success: true,
-        content: saved,
+        msg: "product added successfully",
+        content: result,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  assignClosette: async (req, res, next) => {
+    try {
+      // can be retrieved from, token or body
+      const userId = req.body.user || req.decoded._id;
+
+      let user = await Users.findOne({ _id: userId });
+      if (!user)
+        res.status(400).json({
+          success: true,
+          msg: "bad request",
+        });
+
+      const updated = await Products.updateOne(
+        {
+          _id: req.body.product,
+        },
+        {
+          closette: req.body.closette,
+        }
+      );
+
+      res.status(200).json({
+        success: true,
+        msg: "product updated successfully",
+        content: updated,
       });
     } catch (err) {
       next(err);

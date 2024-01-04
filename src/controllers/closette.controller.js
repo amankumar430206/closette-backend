@@ -1,5 +1,10 @@
-import { Closette, defaultSections } from "../models/Closette.js";
+import {
+  Closette,
+  defaultSections,
+  ClosetteSection,
+} from "../models/Closette.js";
 import { closetteValidatiion } from "../models/validations/closette.validation.js";
+import { productValidationSchema } from "../models/validations/products.validation.js";
 
 export default {
   getAll: async (req, res, next) => {
@@ -30,7 +35,9 @@ export default {
 
   getByUserId: async (req, res, next) => {
     try {
-      let data = await Closette.find({ user: req.params.id });
+      let data = await Closette.find({ user: req.params.id }).populate(
+        "sections"
+      );
 
       res.status(200).json({
         success: true,
@@ -68,18 +75,53 @@ export default {
       const { name, location, description, sections } = req.body;
 
       // genetate sections for the closette
-      const Sections = sections.length ? sections : defaultSections;
+      const _sections = sections.length ? sections : defaultSections;
 
       let closette = new Closette({
         user: user,
         name: name,
         location: location,
         description: description,
-        sections: generateSections(Sections),
+        sections: [],
       });
+
+      const insertedSections = await ClosetteSection.insertMany(
+        generateSections(_sections, closette._id)
+      );
+
+      // get section ids to add in a closette
+      const sectionIds = insertedSections.map((section) => section._id);
+
+      closette.sections = sectionIds;
 
       // save the closette for the user
       const data = await closette.save();
+
+      res.status(200).json({
+        success: true,
+        msg: "closette has been created successfully!",
+        content: data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  assignClosetteToProduct: async (req, res, next) => {
+    try {
+      const user = req.body.user || req.decoded._id;
+
+      const closette = await Closette.findOne({
+        _id: req.body.closetteId,
+      });
+
+      if (!closette)
+        return res.status(400).json({
+          success: false,
+          msg: "no closette found",
+        });
+
+      const { productId, closetteId } = req.body;
 
       res.status(200).json({
         success: true,
@@ -111,11 +153,12 @@ export default {
   },
 };
 
-const generateSections = (sections = []) => {
+const generateSections = (sections = [], closetteId) => {
   return sections.map((name) => {
     return {
       name: name?.toLowerCase(),
       items: [],
+      closette: closetteId,
     };
   });
 };

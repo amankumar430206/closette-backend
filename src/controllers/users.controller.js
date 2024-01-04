@@ -18,7 +18,7 @@ export default {
   // get single user details
   USER: async (req, res, next) => {
     try {
-      let user = await Users.findOne({ _id: req.params.id });
+      let user = await Users.findOne({ _id: req.params.id }).select("-otp");
 
       if (!user) {
         return res.status(404).json({
@@ -65,7 +65,7 @@ export default {
       };
 
       // update found user with req.body or payload
-      const result = await Users.findOneAndUpdate(
+      const result = await Users.updateOne(
         {
           _id: user._id,
         },

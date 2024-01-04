@@ -11,8 +11,8 @@ router.get("/products", VerifyToken, Controller.getAll);
 // get product by product id
 router.get("/products/:id", VerifyToken, Controller.getById);
 
-// get products of the user
-router.get("/products/user", VerifyToken, Controller.getByUserId);
+// get all products of the user
+router.get("/products/user/:id", VerifyToken, Controller.getByUserId);
 
 // add product
 router.post(
@@ -38,5 +38,7 @@ router.patch(
 
 // delete product by id
 router.delete("/products/:id", VerifyToken, Controller.removeById);
+
+router.get("/image/:imageName", VerifyToken, Controller.getImageFromS3);
 
 export { router as ProductRouter };

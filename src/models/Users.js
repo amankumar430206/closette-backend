@@ -71,7 +71,7 @@ UserSchema.methods.generateToken = function () {
     },
     process.env.CL_AUTH_JWT_SECRET_KEY,
     {
-      expiresIn: "1h",
+      expiresIn: "2h",
     }
   );
   return token;

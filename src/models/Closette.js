@@ -6,7 +6,7 @@ const deepPopulate = mongooseDeepPopulate(mongoose);
 const Schema = mongoose.Schema;
 
 // Enum for predefined section names
-export const defaultSections = [
+export const CATEGORIES = [
   "Tops",
   "Bottoms",
   "Outerwear",
@@ -18,25 +18,6 @@ export const defaultSections = [
   "Sportswear",
   "Formalwear",
 ];
-
-// Define a schema for a wardrobe section
-const SectionSchema = new Schema({
-  closette: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: MODELS.CLOSETTE,
-    required: "please assign closette to the section",
-  },
-  name: {
-    type: String,
-    required: "pleae assign name to section",
-  },
-  items: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: MODELS.PRODUCT,
-    },
-  ],
-});
 
 const ClosetteSchema = new Schema(
   {
@@ -51,14 +32,7 @@ const ClosetteSchema = new Schema(
       required: "please provide name for your closette",
       lowercase: true,
     },
-    location: { type: String, trim: true },
     description: { type: String, trim: true, maxLength: 255 },
-    sections: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: MODELS.CLOSETTE_SECTION,
-      },
-    ],
   },
   { timestamps: true }
 );
@@ -75,8 +49,3 @@ ClosetteSchema.pre("save", function (next) {
 ClosetteSchema.plugin(deepPopulate);
 
 export const Closette = new mongoose.model(MODELS.CLOSETTE, ClosetteSchema);
-
-export const ClosetteSection = new mongoose.model(
-  MODELS.CLOSETTE_SECTION,
-  SectionSchema
-);

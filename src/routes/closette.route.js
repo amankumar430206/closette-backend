@@ -7,6 +7,9 @@ const router = Router();
 // get all closettes
 router.get("/clst", VerifyToken, ClosetteController.getAll);
 
+// get all categories
+router.get("/clst/categories", VerifyToken, ClosetteController.getCategories);
+
 // get by closette id
 router.get("/clst/:id", VerifyToken, ClosetteController.getById);
 

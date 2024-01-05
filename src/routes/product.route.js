@@ -6,13 +6,19 @@ import { upload } from "../middlewares/fileUpload.js";
 const router = Router();
 
 // get all products [admin]
-router.get("/products", VerifyToken, Controller.getAll);
+router.get("/products", Controller.getAll);
+
+// filter products by user or closette
+router.get("/products/filter", VerifyToken, Controller.filterProducts);
 
 // get product by product id
 router.get("/products/:id", VerifyToken, Controller.getById);
 
 // get all products of the user
 router.get("/products/user/:id", VerifyToken, Controller.getByUserId);
+
+// get all products of the closette
+router.get("/products/closette/:id", VerifyToken, Controller.getByClosetteId);
 
 // add product
 router.post(

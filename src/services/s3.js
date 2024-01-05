@@ -31,10 +31,30 @@ const getSignedImageUrl = async (image) => {
   return url;
 };
 
+const uploadDocument = async (file) => {
+  //parse image and upload to s3
+  const _params = {
+    Bucket: bucketName,
+    Body: file.buffer,
+    Key: generateFileName(),
+    ContentType: file.mimetype,
+  };
+
+  // save image to s3
+  const command = new PutObjectCommand(_params);
+
+  const uploaded = await s3.send(command);
+  return {
+    uploaded,
+    filename: _params.Key,
+  };
+};
+
 export {
   s3,
   PutObjectCommand,
   bucketName,
   generateFileName,
   getSignedImageUrl,
+  uploadDocument,
 };

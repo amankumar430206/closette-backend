@@ -1,16 +1,10 @@
-import {
-  Closette,
-  defaultSections,
-  ClosetteSection,
-} from "../models/Closette.js";
+import { Closette, CATEGORIES } from "../models/Closette.js";
 import { closetteValidatiion } from "../models/validations/closette.validation.js";
-import { productValidationSchema } from "../models/validations/products.validation.js";
 
 export default {
   getAll: async (req, res, next) => {
     try {
       let data = await Closette.find({});
-
       res.status(200).json({
         success: true,
         content: data,
@@ -33,11 +27,20 @@ export default {
     }
   },
 
+  getCategories: async (req, res, next) => {
+    try {
+      res.status(200).json({
+        success: true,
+        content: CATEGORIES,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getByUserId: async (req, res, next) => {
     try {
-      let data = await Closette.find({ user: req.params.id }).populate(
-        "sections"
-      );
+      let data = await Closette.find({ user: req.params.id });
 
       res.status(200).json({
         success: true,
@@ -72,27 +75,13 @@ export default {
           msg: "you have already created closette with the same name",
         });
 
-      const { name, location, description, sections } = req.body;
-
-      // genetate sections for the closette
-      const _sections = sections.length ? sections : defaultSections;
+      const { name, description } = req.body;
 
       let closette = new Closette({
         user: user,
         name: name,
-        location: location,
         description: description,
-        sections: [],
       });
-
-      const insertedSections = await ClosetteSection.insertMany(
-        generateSections(_sections, closette._id)
-      );
-
-      // get section ids to add in a closette
-      const sectionIds = insertedSections.map((section) => section._id);
-
-      closette.sections = sectionIds;
 
       // save the closette for the user
       const data = await closette.save();

@@ -1,5 +1,6 @@
 import { Users } from "../models/Users.js";
 import { userDetailsValidation } from "../models/validations/user.validation.js";
+import { uploadDocument } from "../services/s3.js";
 export default {
   // get users list
   USERS: async (req, res, next) => {
@@ -98,21 +99,22 @@ export default {
         });
       }
 
+      //upload document to s3 bucket
+      const doc = await uploadDocument(req.file);
+
       // update found user with req.body or payload
       const result = await Users.findOneAndUpdate(
         {
           _id: user._id,
         },
-
-        // payload to update
         {
-          photo: `${user.name}'s photo url get from s3 bucket`,
+          photo: doc.filename,
         }
       );
 
       res.status(200).json({
         success: true,
-        msg: "user updated successfully",
+        msg: "profile updated successfully",
         result,
       });
     } catch (err) {

@@ -38,6 +38,18 @@ export default {
     }
   },
 
+  getClosetteNames: async (req, res, next) => {
+    try {
+      const data = await Closette.find({ user: req.decoded._id }).select(
+        "name"
+      );
+
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getByUserId: async (req, res, next) => {
     try {
       let data = await Closette.find({ user: req.params.id });

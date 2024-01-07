@@ -19,8 +19,7 @@ const ProductSchema = new mongoose.Schema(
       },
     ],
     category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: MODELS.CATEGORY, // Reference to the category model
+      type: String,
     },
     title: {
       type: String,
@@ -31,9 +30,6 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
     description: {
-      type: String,
-    },
-    color: {
       type: String,
     },
   },

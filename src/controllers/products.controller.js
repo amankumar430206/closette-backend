@@ -124,19 +124,14 @@ export default {
 
       //upload document to s3 bucket
       const doc = await uploadDocument(req.file);
-      console.log("file uploaded", doc.uploaded);
-
-      // get signed url
-      const ImageUrl = await getSignedImageUrl(doc.filename);
 
       // assign product with the user
       const product = new Products({
         closette: req.body.closette,
         category: req.body.category,
+        user: user._id,
         title: req.body.title,
         description: req.body.description,
-        color: req.body.color,
-        user: user._id,
         image: doc.filename, // key is the image identifier
       });
 

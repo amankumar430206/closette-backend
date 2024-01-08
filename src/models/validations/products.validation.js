@@ -10,9 +10,7 @@ export const productValidationSchema = Joi.object({
     fieldname: Joi.string().required(), // Binary data of the image
     originalname: Joi.string().required(), // Binary data of the image
     buffer: Joi.binary().required(), // Binary data of the image
-    mimetype: Joi.string()
-      .valid("image/jpeg", "image/png", "image/jpg")
-      .required(), // Mime type validation
+    mimetype: Joi.string().required(), // Mime type validation
   })
     .required()
     .unknown(true),

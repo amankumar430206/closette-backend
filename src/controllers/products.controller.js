@@ -13,6 +13,12 @@ export default {
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);
 
+      // remapping for image url
+      for (let i = 0; i < data.length; i++) {
+        const url = await getSignedImageUrl(data[i].image);
+        data[i].image = url;
+      }
+
       res.status(200).json({
         success: true,
         content: data,
@@ -40,6 +46,12 @@ export default {
       })
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);
+
+      // remapping for image url
+      for (let i = 0; i < data.length; i++) {
+        const url = await getSignedImageUrl(data[i].image);
+        data[i].image = url;
+      }
 
       res.status(200).json({
         success: true,
@@ -70,6 +82,13 @@ export default {
       const data = await Products.find({ user: req.params.id })
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);
+
+      // remapping for image url
+      for (let i = 0; i < data.length; i++) {
+        const url = await getSignedImageUrl(data[i].image);
+        data[i].image = url;
+      }
+
       res.status(200).json({
         success: true,
         content: data,
@@ -90,6 +109,12 @@ export default {
       })
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);
+
+      for (let i = 0; i < data.length; i++) {
+        const url = await getSignedImageUrl(data[i].image);
+        data[i].image = url;
+      }
+
       res.status(200).json({
         success: true,
         content: data,

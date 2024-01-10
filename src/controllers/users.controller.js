@@ -40,15 +40,6 @@ export default {
   // update user details
   UPDATE_USER: async (req, res, next) => {
     try {
-      let user = await Users.findOne({ _id: req.decoded._id });
-
-      if (!user) {
-        return res.status(400).json({
-          msg: "User Not Found",
-          success: false,
-        });
-      }
-
       // validate user data
       const { error } = userDetailsValidation.validate(req.body);
       if (error)
@@ -57,23 +48,25 @@ export default {
           success: false,
         });
 
-      const userDetails = {
-        username: req.body.username,
-        name: req.body.name,
-        dob: req.body.dob,
-        gender: req.body.gender,
-        contact: req.body.contact?.trim(),
-      };
+      let user = await Users.findOne({ _id: req.params.id });
+
+      if (!user) {
+        return res.status(400).json({
+          msg: "User Not Found",
+          success: false,
+        });
+      }
 
       // update found user with req.body or payload
       const result = await Users.updateOne(
         {
           _id: user._id,
         },
-
-        // payload to update
         {
-          ...userDetails,
+          name: req.body.name,
+          dob: req.body.dob,
+          gender: req.body.gender,
+          contact: req.body.contact?.trim(),
         }
       );
 

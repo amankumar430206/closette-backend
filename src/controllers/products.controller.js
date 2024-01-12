@@ -103,9 +103,10 @@ export default {
     try {
       const pagination = await PaginateQuery(req.query, Products);
 
-      // since one closette belongs to one user, so directly we can find items blonging to that closette
+      // filter products by category
       const data = await Products.find({
         closette: req.params.id,
+        category: req.query.category,
       })
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);

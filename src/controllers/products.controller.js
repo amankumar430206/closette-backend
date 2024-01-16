@@ -105,8 +105,14 @@ export default {
 
       // filter products by category
       const data = await Products.find({
-        closette: req.params.id,
-        category: req.query.category,
+        $or: [
+          {
+            closette: req.params.id,
+          },
+          {
+            category: req.query.category,
+          },
+        ],
       })
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);

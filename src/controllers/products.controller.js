@@ -1,6 +1,6 @@
 import { Products } from "../models/Product.js";
-import { productValidationSchema } from "../models/validations/products.validation.js";
 import { Users } from "../models/Users.js";
+import { productValidationSchema } from "../models/validations/products.validation.js";
 import { getSignedImageUrl, uploadDocument } from "../services/s3.js";
 import { PaginateQuery } from "../utils/utils.js";
 
@@ -103,17 +103,19 @@ export default {
     try {
       const pagination = await PaginateQuery(req.query, Products);
 
+      // filter by category
+      const category = req.query.category;
+
+      const query = {
+        closette: req.params.id,
+      };
+
+      if (category) {
+        query.category = category;
+      }
+
       // filter products by category
-      const data = await Products.find({
-        $or: [
-          {
-            closette: req.params.id,
-          },
-          {
-            category: req.query.category,
-          },
-        ],
-      })
+      const data = await Products.find(query)
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);
 

@@ -1,4 +1,8 @@
 node_modules
 readme.md
 
-.env
+.vercel
+*.pem
+
+build
+dist

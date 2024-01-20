@@ -3,6 +3,3 @@ readme.md
 
 .vercel
 *.pem
-
-build
-dist

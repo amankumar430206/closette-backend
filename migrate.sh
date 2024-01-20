@@ -1,0 +1,1 @@
+rm -rf ./dist ; cp -Ri ../clst-client-admin/dist/ .

@@ -65,11 +65,22 @@ export default {
 
   getById: async (req, res, next) => {
     try {
-      let data = await Products.findOne({ _id: req.params.id });
-      data.image = getSignedImageUrl(data.image);
+      let data = await Products.find({ _id: req.params.id });
+
+      // remapping for image url
+      if (data.length)
+        for (let i = 0; i < data.length; i++) {
+          let signedImages = [];
+          for (let j = 0; j < data[i].image.length; j++) {
+            const imageUrl = await getSignedImageUrl(data[i].image[j]);
+            signedImages.push(imageUrl);
+          }
+          data[i].image = signedImages;
+        }
+
       res.status(200).json({
         success: true,
-        content: data,
+        content: data[0] || {},
       });
     } catch (err) {
       next(err);
@@ -85,8 +96,12 @@ export default {
 
       // remapping for image url
       for (let i = 0; i < data.length; i++) {
-        const url = await getSignedImageUrl(data[i].image);
-        data[i].image = url;
+        let signedImages = [];
+        for (let j = 0; j < data[i].image.length; j++) {
+          const imageUrl = await getSignedImageUrl(data[i].image[j]);
+          signedImages.push(imageUrl);
+        }
+        data[i].image = signedImages;
       }
 
       res.status(200).json({
@@ -119,9 +134,14 @@ export default {
         .skip((pagination.page - 1) * pagination.pageSize)
         .limit(pagination.pageSize);
 
+      // remapping for image url
       for (let i = 0; i < data.length; i++) {
-        const url = await getSignedImageUrl(data[i].image);
-        data[i].image = url;
+        let signedImages = [];
+        for (let j = 0; j < data[i].image.length; j++) {
+          const imageUrl = await getSignedImageUrl(data[i].image[j]);
+          signedImages.push(imageUrl);
+        }
+        data[i].image = signedImages;
       }
 
       res.status(200).json({
@@ -141,8 +161,9 @@ export default {
 
       const { error } = productValidationSchema.validate({
         ...req.body,
-        image: req.file,
+        image: req.files,
       });
+
       if (error)
         return res.status(400).json({
           msg: error.details[0].message,
@@ -156,8 +177,7 @@ export default {
           msg: "bad request",
         });
 
-      //upload document to s3 bucket
-      const doc = await uploadDocument(req.file);
+      const images = req.files;
 
       // assign product with the user
       const product = new Products({
@@ -166,8 +186,15 @@ export default {
         user: user._id,
         title: req.body.title,
         description: req.body.description,
-        image: doc.filename, // key is the image identifier
+        image: [], // key(image) is the image identifier
       });
+
+      // push files to product.image
+      for (let i = 0; i < images.length; i++) {
+        //upload document to s3 bucket
+        const image = await uploadDocument(images[i]);
+        product.image.push(image.filename);
+      }
 
       const result = await product.save();
 

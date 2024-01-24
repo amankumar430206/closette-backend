@@ -24,7 +24,7 @@ router.get("/products/closette/:id", VerifyToken, Controller.getByClosetteId);
 router.post(
   "/products/add",
   VerifyToken,
-  upload.single("image"),
+  upload.array("image"),
   Controller.addProduct
 );
 

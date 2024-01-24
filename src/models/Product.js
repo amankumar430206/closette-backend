@@ -25,10 +25,12 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image: {
-      type: String, // URL or file path to the product image
-      required: true,
-    },
+    image: [
+      {
+        type: String, // URL or file path to the product image
+        required: true,
+      },
+    ],
     description: {
       type: String,
     },

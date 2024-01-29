@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { InitRoute } from "./init.route.js";
-import { AuthRouter } from "./auth.route.js";
-import { UserRouter } from "./user.route.js";
-import { ClosetteRouter } from "./closette.route.js";
-import { ProductRouter } from "./product.route.js";
-import { CategoryRouter } from "./master/categories.route.js";
-import { NotFoundRoute } from "./notfound.route.js";
+import { InitRoute } from "./init.routes.js";
+import { AuthRouter } from "./auth.routes.js";
+import { UserRouter } from "./user.routes.js";
+import { ClosetteRouter } from "./closette.routes.js";
+import { ProductRouter } from "./product.routes.js";
+import { CategoryRouter } from "./master/categories.routes.js";
+import { NotFoundRoute } from "./notfound.routes.js";
+import { StatsRouter } from "./statistics.routes.js";
 
 import { errorHandler } from "../middlewares/error-handler.js";
 import { BASE_URL } from "../const.js";
@@ -17,6 +18,8 @@ router.use(BASE_URL, UserRouter);
 router.use(BASE_URL, ClosetteRouter);
 router.use(BASE_URL, ProductRouter);
 router.use(BASE_URL, CategoryRouter);
+router.use(BASE_URL, CategoryRouter);
+router.use(BASE_URL, StatsRouter);
 router.use(NotFoundRoute);
 
 // Error Handler Route

@@ -178,29 +178,34 @@ export default {
         });
 
       const images = req.files;
-
-      // assign product with the user
-      const product = new Products({
-        closette: req.body.closette,
-        category: req.body.category,
-        user: user._id,
-        title: req.body.title,
-        description: req.body.description,
-        image: [], // key(image) is the image identifier
-      });
+      const processedDocuments = [];
 
       // push files to product.image
       for (let i = 0; i < images.length; i++) {
+        const title = images.length > 1 ? "" : req.body.title;
+
+        // assign product with the user
+        const product = new Products({
+          closette: req.body.closette,
+          category: req.body.category,
+          user: user._id,
+          title: title,
+          description: req.body.description,
+          image: [], // key(image) is the image identifier
+        });
+
         //upload document to s3 bucket
         const image = await uploadDocument(images[i]);
+
         product.image.push(image.filename);
+        processedDocuments.push(product);
       }
 
-      const result = await product.save();
+      const result = await Products.insertMany(processedDocuments);
 
       res.status(200).json({
         success: true,
-        msg: "product added successfully",
+        msg: "product(s) added successfully",
         content: result,
       });
     } catch (err) {

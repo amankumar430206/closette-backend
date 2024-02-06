@@ -39,6 +39,9 @@ app.use(routes);
 app.get(`${baseUrl}/*`, (req, res) => {
   res.sendFile(join(__dirname, "dist", "index.html"));
 });
+app.get(`${baseUrl}/admin*`, (req, res) => {
+  res.sendFile(join(__dirname, "dist", "index.html"));
+});
 
 startServer(app);
 connectDB();

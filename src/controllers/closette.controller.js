@@ -4,7 +4,10 @@ import { closetteValidatiion } from "../models/validations/closette.validation.j
 export default {
   getAll: async (req, res, next) => {
     try {
-      let data = await Closette.find({});
+      let data = await Closette.find({}).populate({
+        path: "user",
+        select: "name email photo",
+      });
       res.status(200).json({
         success: true,
         content: data,

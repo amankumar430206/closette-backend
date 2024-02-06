@@ -5,7 +5,7 @@ export default {
   // get users list
   USERS: async (req, res, next) => {
     try {
-      let users = await Users.find({});
+      let users = await Users.find({}).select("-otp");
 
       res.status(200).json({
         success: true,

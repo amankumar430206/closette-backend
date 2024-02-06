@@ -4,6 +4,9 @@ import { VerifyToken } from "../middlewares/verifyToken.js";
 
 const router = Router();
 
+// admin routes
+router.get("/admin/closette", ClosetteController.getAll);
+
 // get all closettes
 router.get("/clst", VerifyToken, ClosetteController.getAll);
 

@@ -7,6 +7,7 @@ import { PaginateQuery } from "../utils/utils.js";
 export default {
   getAll: async (req, res, next) => {
     try {
+      console.log("finding all products");
       const pagination = await PaginateQuery(req.query, Products);
 
       const data = await Products.find({})
@@ -15,8 +16,12 @@ export default {
 
       // remapping for image url
       for (let i = 0; i < data.length; i++) {
-        const url = await getSignedImageUrl(data[i].image);
-        data[i].image = url;
+        let signedImages = [];
+        for (let j = 0; j < data[i].image.length; j++) {
+          const imageUrl = await getSignedImageUrl(data[i].image[j]);
+          signedImages.push(imageUrl);
+        }
+        data[i].image = signedImages;
       }
 
       res.status(200).json({
@@ -49,8 +54,12 @@ export default {
 
       // remapping for image url
       for (let i = 0; i < data.length; i++) {
-        const url = await getSignedImageUrl(data[i].image);
-        data[i].image = url;
+        let signedImages = [];
+        for (let j = 0; j < data[i].image.length; j++) {
+          const imageUrl = await getSignedImageUrl(data[i].image[j]);
+          signedImages.push(imageUrl);
+        }
+        data[i].image = signedImages;
       }
 
       res.status(200).json({

@@ -20,7 +20,7 @@ router.get("/clst/categories", VerifyToken, ClosetteController.getCategories);
 router.get("/clst/:id", VerifyToken, ClosetteController.getById);
 
 // get closette by user id
-router.get("/clst/user/:id", VerifyToken, ClosetteController.getByUserId);
+router.get("/clst/user/:id", ClosetteController.getByUserId);
 
 // get items in a closette
 router.post("/clst/products", VerifyToken, ClosetteController.create);

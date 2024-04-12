@@ -286,4 +286,17 @@ export default {
       next(err);
     }
   },
+
+  udpateProduct: async (req, res, next) => {
+    try {
+      const id = req.params.id;
+
+      res.status(200).json({
+        success: true,
+        content: url,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };

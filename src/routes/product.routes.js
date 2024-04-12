@@ -15,10 +15,10 @@ router.get("/products/filter", VerifyToken, Controller.filterProducts);
 router.get("/products/:id", VerifyToken, Controller.getById);
 
 // get all products of the user
-router.get("/products/user/:id", VerifyToken, Controller.getByUserId);
+router.get("/products/user/:id", Controller.getByUserId);
 
 // get all products of the closette
-router.get("/products/closette/:id", VerifyToken, Controller.getByClosetteId);
+router.get("/products/closette/:id", Controller.getByClosetteId);
 
 // add product
 router.post(
@@ -30,9 +30,6 @@ router.post(
 
 // assign closette to product
 router.put("/products/assign/closette", VerifyToken, Controller.assignClosette);
-
-// update product
-router.put("/products/:id", VerifyToken, Controller.getByUserId);
 
 // update product image
 router.patch(
@@ -46,5 +43,15 @@ router.patch(
 router.delete("/products/:id", VerifyToken, Controller.removeById);
 
 router.get("/image/:imageName", VerifyToken, Controller.getImageFromS3);
+
+// update product
+router.put("/products/:id", VerifyToken, Controller.getByUserId);
+
+// asiign product categories
+router.put(
+  "/products/assign/categories/:productId",
+  VerifyToken,
+  Controller.getByUserId
+);
 
 export { router as ProductRouter };
